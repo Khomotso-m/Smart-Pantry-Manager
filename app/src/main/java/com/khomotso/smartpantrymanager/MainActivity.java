@@ -1,4 +1,4 @@
-package com.khomotso.smarpantrymanager;
+package com.khomotso.smartpantrymanager;
 
 import android.os.Bundle;
 
