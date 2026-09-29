@@ -13,11 +13,11 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.khomotso.smartpantrymanager.data.PantryDatabase;
 import com.khomotso.smartpantrymanager.data.PantryItem;
 import com.khomotso.smartpantrymanager.data.PantryItemDao;
-import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.List;
 
@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new PantryAdapter();
+        adapter.setOnItemLongClickListener(item -> showDeleteDialog(item));
         recyclerView.setAdapter(adapter);
 
         // Observe LiveData — automatically updates list when DB changes
@@ -104,6 +106,15 @@ public class MainActivity extends AppCompatActivity {
                     PantryItem item = new PantryItem(name, qty, unit, expiry);
                     dao.insert(item);
                 })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showDeleteDialog(PantryItem item) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Item")
+                .setMessage("Delete \"" + item.getName() + "\"?")
+                .setPositiveButton("Delete", (dialog, which) -> dao.delete(item))
                 .setNegativeButton("Cancel", null)
                 .show();
     }
