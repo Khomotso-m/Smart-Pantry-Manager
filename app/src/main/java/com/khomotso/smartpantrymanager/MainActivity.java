@@ -17,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.khomotso.smartpantrymanager.data.PantryDatabase;
 import com.khomotso.smartpantrymanager.data.PantryItem;
 import com.khomotso.smartpantrymanager.data.PantryItemDao;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.List;
 
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         // Get DAO from Room database
         dao = PantryDatabase.getInstance(this).pantryItemDao();
