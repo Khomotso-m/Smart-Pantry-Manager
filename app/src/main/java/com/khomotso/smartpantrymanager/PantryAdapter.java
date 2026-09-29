@@ -24,8 +24,13 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         void onItemLongClick(PantryItem item);
     }
 
+    public interface OnItemClickListener {
+        void onItemClick(PantryItem item);
+    }
+
     private List<PantryItem> items = new ArrayList<>();
     private OnItemLongClickListener longClickListener;
+    private OnItemClickListener clickListener;
 
     public void setItems(List<PantryItem> items) {
         this.items = items;
@@ -34,6 +39,10 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
 
     public void setOnItemLongClickListener(OnItemLongClickListener listener) {
         this.longClickListener = listener;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.clickListener = listener;
     }
 
     @NonNull
@@ -74,7 +83,14 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
             holder.textExpiry.setTextColor(Color.parseColor("#666666"));
         }
 
-        // Long-press listener
+        // Tap listener (edit)
+        holder.itemView.setOnClickListener(v -> {
+            if (clickListener != null) {
+                clickListener.onItemClick(item);
+            }
+        });
+
+        // Long-press listener (delete)
         holder.itemView.setOnLongClickListener(v -> {
             if (longClickListener != null) {
                 longClickListener.onItemLongClick(item);
