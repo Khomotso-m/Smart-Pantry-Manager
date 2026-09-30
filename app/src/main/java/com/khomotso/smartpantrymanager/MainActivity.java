@@ -2,6 +2,8 @@ package com.khomotso.smartpantrymanager;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -9,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +22,7 @@ import com.khomotso.smartpantrymanager.data.PantryDatabase;
 import com.khomotso.smartpantrymanager.data.PantryItem;
 import com.khomotso.smartpantrymanager.data.PantryItemDao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private PantryItemDao dao;
     private TextView textEmpty;
     private RecyclerView recyclerView;
+    private List<PantryItem> allItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         dao.getAllItems().observe(this, new Observer<List<PantryItem>>() {
             @Override
             public void onChanged(List<PantryItem> items) {
+                allItems = items;
                 adapter.setItems(items);
                 textEmpty.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
             }
@@ -57,6 +63,49 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.fabAdd);
         fab.setOnClickListener(v -> showAddDialog());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setQueryHint("Search items...");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filterItems(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterItems(newText);
+                return true;
+            }
+        });
+
+        return true;
+    }
+
+    private void filterItems(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            adapter.setItems(allItems);
+            textEmpty.setVisibility(allItems.isEmpty() ? View.VISIBLE : View.GONE);
+            return;
+        }
+
+        String lower = query.toLowerCase().trim();
+        List<PantryItem> filtered = new ArrayList<>();
+        for (PantryItem item : allItems) {
+            if (item.getName().toLowerCase().contains(lower)) {
+                filtered.add(item);
+            }
+        }
+        adapter.setItems(filtered);
+        textEmpty.setVisibility(filtered.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
     private void showAddDialog() {
@@ -114,7 +163,6 @@ public class MainActivity extends AppCompatActivity {
         EditText inputUnit = dialogView.findViewById(R.id.inputUnit);
         EditText inputExpiry = dialogView.findViewById(R.id.inputExpiry);
 
-        // Pre-fill with existing values
         inputName.setText(item.getName());
         inputQuantity.setText(String.valueOf(item.getQuantity()));
         inputUnit.setText(item.getUnit());
@@ -158,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    // Update the existing item
                     item.setName(name);
                     item.setQuantity(qty);
                     item.setUnit(unit);
