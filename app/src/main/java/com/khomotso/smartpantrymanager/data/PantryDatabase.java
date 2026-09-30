@@ -6,7 +6,9 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+//database for smart pantry manager
 @Database(
+        //pantry item table
         entities = {PantryItem.class, Recipe.class},
         version = 2,
         exportSchema = false

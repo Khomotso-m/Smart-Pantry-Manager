@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.khomotso.smartpantrymanager.data.PantryDatabase;
 import com.khomotso.smartpantrymanager.data.PantryItem;
 import com.khomotso.smartpantrymanager.data.PantryItemDao;
+import com.khomotso.smartpantrymanager.data.RecipeSeeder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,21 +39,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+//toolbar setup
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+//database setup
         dao = PantryDatabase.getInstance(this).pantryItemDao();
-
+        RecipeSeeder.seedIfEmpty(PantryDatabase.getInstance(this).recipeDao());
+//recyclerview setup
         recyclerView = findViewById(R.id.recyclerView);
         textEmpty = findViewById(R.id.textEmpty);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+//create pantry adapter
         adapter = new PantryAdapter();
         adapter.setOnItemLongClickListener(item -> showDeleteDialog(item));
         adapter.setOnItemClickListener(item -> showEditDialog(item));
         recyclerView.setAdapter(adapter);
-
+//get added item and updated items
         dao.getAllItems().observe(this, new Observer<List<PantryItem>>() {
             @Override
             public void onChanged(List<PantryItem> items) {
@@ -89,6 +92,14 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_recipes) {
+            startActivity(new Intent(this, RecipeListActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private void filterItems(String query) {
         if (query == null || query.trim().isEmpty()) {
@@ -123,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                     String qtyStr = inputQuantity.getText().toString().trim();
                     String unit = inputUnit.getText().toString().trim();
                     String expiryStr = inputExpiry.getText().toString().trim();
-
+//validation - name and quantity is required
                     if (TextUtils.isEmpty(name) || TextUtils.isEmpty(qtyStr)) {
                         Toast.makeText(this, "Name and quantity are required", Toast.LENGTH_SHORT).show();
                         return;
@@ -215,7 +226,6 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
-
     private void showDeleteDialog(PantryItem item) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Item")

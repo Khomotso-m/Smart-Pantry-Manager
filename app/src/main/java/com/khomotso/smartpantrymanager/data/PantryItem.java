@@ -3,6 +3,7 @@ package com.khomotso.smartpantrymanager.data;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+//pantry items table
 @Entity(tableName = "pantry_items")
 public class PantryItem {
 
@@ -13,7 +14,7 @@ public class PantryItem {
     private double quantity;
     private String unit;
     private long expiryDate;
-
+//setting items matrix(name, quantity, unit and expiry date
     public PantryItem(String name, double quantity, String unit, long expiryDate) {
         this.name = name;
         this.quantity = quantity;

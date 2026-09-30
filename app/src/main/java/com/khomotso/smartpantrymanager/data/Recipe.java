@@ -9,9 +9,9 @@ public class Recipe {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
-    private String name;
-    private String ingredients;   // newline-separated
-    private String steps;         // newline-separated
+         private String name;
+    private String ingredients;
+         private String steps;
 
     public Recipe(String name, String ingredients, String steps) {
         this.name = name;

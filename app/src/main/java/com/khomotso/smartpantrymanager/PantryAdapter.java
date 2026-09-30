@@ -56,41 +56,44 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
     @Override
     public void onBindViewHolder(@NonNull PantryViewHolder holder, int position) {
         PantryItem item = items.get(position);
-
+//name and quantity of item
         holder.textName.setText(item.getName());
         holder.textQuantity.setText(item.getQuantity() + " " + item.getUnit());
 
+        //expiry item details
         if (item.getExpiryDate() > 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
             String dateStr = sdf.format(new Date(item.getExpiryDate()));
             holder.textExpiry.setText("Expires: " + dateStr);
 
+            //calculating expiry days
             long now = System.currentTimeMillis();
             long diffMillis = item.getExpiryDate() - now;
             long daysLeft = TimeUnit.MILLISECONDS.toDays(diffMillis);
 
             if (daysLeft < 0) {
                 holder.textExpiry.setTextColor(Color.parseColor("#D32F2F"));
-                holder.textExpiry.append("  ⚠ EXPIRED");
+                holder.textExpiry.append(" EXPIRED");
             } else if (daysLeft <= 3) {
+                //warning expire soon
                 holder.textExpiry.setTextColor(Color.parseColor("#F57C00"));
-                holder.textExpiry.append("  ⚠ " + daysLeft + " day(s) left");
+                holder.textExpiry.append("!" + daysLeft + " day(s) left");
             } else {
                 holder.textExpiry.setTextColor(Color.parseColor("#666666"));
             }
         } else {
+            //no expiry date
             holder.textExpiry.setText("No expiry date");
             holder.textExpiry.setTextColor(Color.parseColor("#666666"));
         }
-
-        // Tap listener (edit)
+        //tap listener (edit)
         holder.itemView.setOnClickListener(v -> {
             if (clickListener != null) {
                 clickListener.onItemClick(item);
             }
         });
 
-        // Long-press listener (delete)
+        //long-press listener (delete)
         holder.itemView.setOnLongClickListener(v -> {
             if (longClickListener != null) {
                 longClickListener.onItemLongClick(item);
