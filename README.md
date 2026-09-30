@@ -54,18 +54,18 @@ with common ingredients.
 -----
 ## Project Structure
 app/src/main/java/com/khomotso/smartpantrymanager/
--MainActivity.java → Pantry screen (list, add/edit/delete, search)
--PantryAdapter.java → RecyclerView adapter for pantry items
--RecipeListActivity.java → Recipe collection screen
--RecipeAdapter.java → RecyclerView adapter for recipes
--RecipeDetailActivity.java → Recipe detail screen (ingredients + steps)
- └── data/
-.....PantryItem.java → @Entity for pantry items
-.....PantryItemDao.java → @Dao for pantry operations
-.....Recipe.java → @Entity for recipes
-.....RecipeDao.java → @Dao for recipe operations
-.....PantryDatabase.java → @Database (Room singleton)
-.....RecipeSeeder.java → Seeds 20 recipes on first launch
+├── MainActivity.java → Pantry screen (list, add/edit/delete, search)
+├── PantryAdapter.java → RecyclerView adapter for pantry items
+├── RecipeListActivity.java → Recipe collection screen
+├── RecipeAdapter.java → RecyclerView adapter for recipes
+├── RecipeDetailActivity.java → Recipe detail screen (ingredients + steps)
+└── data/
+├── PantryItem.java → @Entity for pantry items
+├── PantryItemDao.java → @Dao for pantry operations
+├── Recipe.java → @Entity for recipes
+├── RecipeDao.java → @Dao for recipe operations
+├── PantryDatabase.java → @Database (Room singleton)
+└── RecipeSeeder.java → Seeds 20 recipes on first launch
 
 
 ## How to Run
